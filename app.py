@@ -133,11 +133,14 @@ def init_appointment_table():
         conn.execute("CREATE TABLE IF NOT EXISTS appointment(appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                      "date_made TEXT NOT NULL,"
                      "appointment_date,"
-                     "FOREIGN KEY(appointment_user) REFERENCES user(user_id),"
-                     "FOREIGN KEY(room_no) REFERENCES room(room_number))")
+                     "appointment_user,"
+                     "room_no,"
+                     "CONSTRAINT fk_user FOREIGN KEY (appointment_user) REFERENCES user(user_id),"
+                     "CONSTRAINT fk_room FOREIGN KEY (room_no) REFERENCES room(room_number))")
 
 
 init_admin_table()
+init_appointment_table()
 
 
 def authenticate(username, password):
@@ -297,13 +300,15 @@ def room_create():
 
     if request.method == 'POST':
         room_number = request.json['room_number']
+        description = request.json['description']
         type = request.json['suit_type']
 
-        query = "INSERT INTO cart (room_number, suit_type,  picture) Values(?,?,?)"
-        values = (room_number, type, upload_file())
+        query = "INSERT INTO room (room_number,description,suit_type,picture) Values(?,?,?,?)"
+        values = (room_number, description, type, upload_file())
         database.sending_to_database(query, values)
         response['message'] = "room added successfully"
         response['status_code'] = 201
+        return response
 
 
 # protected route that creates products
@@ -313,12 +318,13 @@ def appointment_create():
     database = Database()
 
     if request.method == "POST":
-        room_number = request.json['room_number']
-        description = request.json['suit_type']
-        time = datetime.datetime.now()
+        date_made = datetime.datetime.now()
+        user = request.json['appointment_user']
+        room_no = request.json['room_no']
 
-        query = "INSERT INTO appointment (room_number, suit_type,  appointment_time) Values(?,?,?)"
-        values = (room_number, description, time)
+        query = "INSERT INTO appointment(date_made, appointment_user," \
+                " room_no)Values(?,?,?)"
+        values = (date_made, user, room_no)
 
         database.sending_to_database(query, values)
         response['message'] = "item added successfully"
@@ -328,11 +334,23 @@ def appointment_create():
 
 # route to show all the products
 @app.route('/get-rooms/', methods=['GET'])
-def get_products():
+def get_rooms():
     response = {}
     database = Database()
 
     query = "SELECT * FROM room"
+    database.single_select(query)
+    response['status_code'] = 201
+    response['data'] = database.fetch()
+    return response
+
+
+@app.route('/show-appointments/', methods=['GET'])
+def get_appointments():
+    response = {}
+    database = Database()
+
+    query = "SELECT * FROM appointments"
     database.single_select(query)
     response['status_code'] = 201
     response['data'] = database.fetch()
@@ -394,6 +412,48 @@ def delete_user(appointment_id):
     return response
 
 
+@app.route("/update-appointment/<int:appointment_id>")
+def update_appointment(appointment_id):
+    response = {}
+
+    if request.method == "PUT":
+        with sqlite3.connect('hotel.db') as conn:
+            cursor = conn.cursor()
+            incoming_data = dict(request.json)
+            put_data = {}
+
+            if incoming_data.get("room_number") is not None:
+                put_data["room_number"] = incoming_data.get("room_number")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE room SET room_number =? WHERE room_id =?", (put_data['room_number'],
+                                                                                       appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+
+            if incoming_data.get("description") is not None:
+                put_data["description"] = incoming_data.get("description")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE room SET description =? WHERE room_id =?",
+                                       (put_data['description'], appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+
+            if incoming_data.get("suit_type") is not None:
+                put_data["suit_type"] = incoming_data.get("suit_type")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE room SET quantity =? WHERE room_id =?",
+                                  (put_data['suit_type'], appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+                    return response
+
+
 # route that deletes a single product
 # @app.route("/delete-product/<int:product_id>")
 # def delete_post(product_id):
@@ -405,7 +465,6 @@ def delete_user(appointment_id):
 #     response['status_code'] = 200
 #     response['message'] = "product deleted successfully."
 #     return response
-
 
 def upload_file():
     app.logger.info('in upload route')
