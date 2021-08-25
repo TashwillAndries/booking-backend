@@ -2,18 +2,21 @@ import hmac
 from flask import *
 from flask_cors import CORS
 
+
 from flask_jwt import JWT
 from flask_mail import Mail, Message
 import datetime
 from smtplib import SMTPRecipientsRefused
 import sqlite3
 
+
 import cloudinary
 import cloudinary.uploader
 
 
 class User(object):
-    def __init__(self, id, username, password):
+    def __init__(self, id,
+                 username, password):
         self.id = id
         self.username = username
         self.password = password
@@ -481,18 +484,19 @@ def upload_file():
 
 
 # route that gets a single product by its ID
-# @app.route('/get-product/<int:product_id>/', methods=["GET"])
-# def get_post(product_id):
-#     response = {}
-#     database = Database()
-#
-#     query = "SELECT * FROM cart WHERE product_id=" + str(product_id)
-#     database.single_select(query)
-#
-#     response["status_code"] = 200
-#     response["description"] = "product retrieved successfully"
-#     response['data'] = database.fetch()
-#     return response
+@app.route('/get-product/<int:product_id>/', methods=["GET"])
+def get_post(product_id):
+    response = {}
+    database = Database()
+
+    query = "SELECT * FROM cart WHERE product_id=" + str(product_id)
+    database.single_select(query)
+
+    response["status_code"] = 200
+    response["description"] = "product retrieved successfully"
+    response['data'] = database.fetch()
+    return response
+
 
 if __name__ == '__main__':
     app.run()
