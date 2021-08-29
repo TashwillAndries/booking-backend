@@ -142,8 +142,20 @@ def init_appointment_table():
                      "CONSTRAINT fk_room FOREIGN KEY (room_no) REFERENCES room(room_number))")
 
 
-init_admin_table()
 init_appointment_table()
+
+
+def init_hotels_table():
+    with sqlite3.connect('hotel.db') as conn:
+        conn.execute("CREATE TABLE IF NOT EXISTS hotels(hotel_id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                     "hotel_picture TEXT NOT NULL,"
+                     "hotel_name TEXT NOT NULL,"
+                     "price TEXT NOT NULL,"
+                     "rating TEXT NOT NULL)")
+        print("hotel table created successfully")
+
+
+init_hotels_table()
 
 
 def authenticate(username, password):
@@ -296,6 +308,24 @@ def view_user(username):
     return jsonify(response)
 
 
+@app.route('/create-hotel/', methods=['POST'])
+def create_hotel():
+    response = {}
+    database = Database()
+
+    if request.method == 'POST':
+        hotel_name = request.json['hotel_name']
+        hotel_price = request.json['price']
+        rating = request.json['rating']
+
+        query = "INSERT INTO hotels (hotel_picture, hotel_name, price, rating) VALUES(?,?,?,?)"
+        values = (hotel_upload(), hotel_name, hotel_price, rating)
+        database.sending_to_database(query, values)
+        response['message'] = "hotel added successfully"
+        response['status_code'] = 201
+        return response
+
+
 @app.route('/create-room/', methods=['POST'])
 def room_create():
     response = {}
@@ -342,6 +372,18 @@ def get_rooms():
     database = Database()
 
     query = "SELECT * FROM room"
+    database.single_select(query)
+    response['status_code'] = 201
+    response['data'] = database.fetch()
+    return response
+
+
+@app.route('/get-hotels/', methods=['GET'])
+def get_hotels():
+    response = {}
+    database = Database()
+
+    query = "SELECT * FROM hotels"
     database.single_select(query)
     response['status_code'] = 201
     response['data'] = database.fetch()
@@ -476,6 +518,20 @@ def upload_file():
     upload_result = None
     if request.method == 'POST' or request.method == 'PUT':
         product_image = request.json['picture']
+        app.logger.info('%s file_to_upload', product_image)
+        if product_image:
+            upload_result = cloudinary.uploader.upload(product_image)
+            app.logger.info(upload_result)
+            return upload_result['url']
+
+
+def hotel_upload():
+    app.logger.info('in upload route')
+    cloudinary.config(cloud_name='dtjgqnwbk', api_key='547853474672121',
+                      api_secret='fXXsay0Fd5RmSPMS5TwZUaJFsRk')
+    upload_result = None
+    if request.method == 'POST' or request.method == 'PUT':
+        product_image = request.json['hotel_picture']
         app.logger.info('%s file_to_upload', product_image)
         if product_image:
             upload_result = cloudinary.uploader.upload(product_image)
