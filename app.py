@@ -88,6 +88,7 @@ users = fetch_users()
 def init_products_table():
     with sqlite3.connect('hotel.db') as conn:
         conn.execute("CREATE TABLE IF NOT EXISTS room (room_id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                     "hotel_name TEXT NOT NULL,"
                      "room_number TEXT NOT NULL,"
                      "description TEXT NOT NULl,"
                      "suit_type TEXT NOT NULL,"
@@ -136,9 +137,10 @@ def init_appointment_table():
     with sqlite3.connect('hotel.db') as conn:
         conn.execute("CREATE TABLE IF NOT EXISTS appointment(appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                      "date_made TEXT NOT NULL,"
-                     "appointment_date,"
-                     "appointment_user,"
-                     "room_no,"
+                     "appointment_date TEXT NOT NULL,"
+                     "appointment_user TEXT NOT NULL,"
+                     "hotel_name TEXT NOT NULL,"
+                     "room_no TEXT NOT NULL,"
                      "CONSTRAINT fk_user FOREIGN KEY (appointment_user) REFERENCES user(user_id),"
                      "CONSTRAINT fk_room FOREIGN KEY (room_no) REFERENCES room(room_number))")
 
@@ -333,13 +335,14 @@ def room_create():
     database = Database()
 
     if request.method == 'POST':
+        hotel_name = request.json['hotel_name']
         room_number = request.json['room_number']
         description = request.json['description']
         type = request.json['suit_type']
         price = request.json['price']
 
-        query = "INSERT INTO room (room_number,description,suit_type,picture,price) Values(?,?,?,?,?)"
-        values = (room_number, description, type, upload_file(),price)
+        query = "INSERT INTO room (hotel_name,room_number,description,suit_type,picture,price) Values(?,?,?,?,?,?)"
+        values = (hotel_name, room_number, description, type, upload_file(), price)
         database.sending_to_database(query, values)
         response['message'] = "room added successfully"
         response['status_code'] = 201
