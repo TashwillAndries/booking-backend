@@ -91,7 +91,8 @@ def init_products_table():
                      "room_number TEXT NOT NULL,"
                      "description TEXT NOT NULl,"
                      "suit_type TEXT NOT NULL,"
-                     "picture TEXT NOT NULL)")
+                     "picture TEXT NOT NULL,"
+                     "price TEXT NOT NULL)")
     print("room table created successfully")
 
 
@@ -335,9 +336,10 @@ def room_create():
         room_number = request.json['room_number']
         description = request.json['description']
         type = request.json['suit_type']
+        price = request.json['price']
 
-        query = "INSERT INTO room (room_number,description,suit_type,picture) Values(?,?,?,?)"
-        values = (room_number, description, type, upload_file())
+        query = "INSERT INTO room (room_number,description,suit_type,picture,price) Values(?,?,?,?,?)"
+        values = (room_number, description, type, upload_file(),price)
         database.sending_to_database(query, values)
         response['message'] = "room added successfully"
         response['status_code'] = 201
