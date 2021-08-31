@@ -137,7 +137,8 @@ def init_appointment_table():
     with sqlite3.connect('hotel.db') as conn:
         conn.execute("CREATE TABLE IF NOT EXISTS appointment(appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                      "date_made TEXT NOT NULL,"
-                     "appointment_date TEXT NOT NULL,"
+                     "check_in_date TEXT NOT NULL,"
+                     "check_out_date TEXT NOT NULL,"
                      "appointment_user TEXT NOT NULL,"
                      "hotel_name TEXT NOT NULL,"
                      "room_no TEXT NOT NULL,"
@@ -357,12 +358,15 @@ def appointment_create():
 
     if request.method == "POST":
         date_made = datetime.datetime.now()
+        check_in = request.json['check_in_date']
+        check_out = request.json['check_out_date']
         user = request.json['appointment_user']
+        hotel_name = request.json['hotel_name']
         room_no = request.json['room_no']
 
-        query = "INSERT INTO appointment(date_made, appointment_user," \
-                " room_no)Values(?,?,?)"
-        values = (date_made, user, room_no)
+        query = "INSERT INTO appointment(date_made,check_in_date, check_out_date, appointment_user,hotel_name," \
+                "room_no)Values(?,?,?,?,?,?)"
+        values = (date_made, check_in, check_out, user, hotel_name, room_no)
 
         database.sending_to_database(query, values)
         response['message'] = "item added successfully"
