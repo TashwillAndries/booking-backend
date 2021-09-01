@@ -369,7 +369,7 @@ def appointment_create():
         values = (date_made, check_in, check_out, user, hotel_name, room_no)
 
         database.sending_to_database(query, values)
-        response['message'] = "item added successfully"
+        response['message'] = "appointment added successfully"
         response['status_code'] = 201
         return response
 
