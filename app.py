@@ -551,12 +551,12 @@ def hotel_upload():
 
 
 # route that gets a single product by its ID
-@app.route('/get-product/<int:product_id>/', methods=["GET"])
-def get_post(product_id):
+@app.route('/get-room/<int:room_id>/', methods=["GET"])
+def get_room(room_id):
     response = {}
     database = Database()
 
-    query = "SELECT * FROM cart WHERE product_id=" + str(product_id)
+    query = "SELECT * FROM room WHERE room_id=" + str(room_id)
     database.single_select(query)
 
     response["status_code"] = 200
