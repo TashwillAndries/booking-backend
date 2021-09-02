@@ -142,6 +142,7 @@ def init_appointment_table():
                      "appointment_user TEXT NOT NULL,"
                      "hotel_name TEXT NOT NULL,"
                      "room_no TEXT NOT NULL,"
+                     "total TEXT NOT NULL,"
                      "CONSTRAINT fk_user FOREIGN KEY (appointment_user) REFERENCES user(user_id),"
                      "CONSTRAINT fk_room FOREIGN KEY (room_no) REFERENCES room(room_number))")
 
@@ -363,10 +364,11 @@ def appointment_create():
         user = request.json['appointment_user']
         hotel_name = request.json['hotel_name']
         room_no = request.json['room_no']
+        total = request.json['total']
 
         query = "INSERT INTO appointment(date_made,check_in_date, check_out_date, appointment_user,hotel_name," \
-                "room_no)Values(?,?,?,?,?,?)"
-        values = (date_made, check_in, check_out, user, hotel_name, room_no)
+                "room_no, total)Values(?,?,?,?,?,?,?)"
+        values = (date_made, check_in, check_out, user, hotel_name, room_no, total)
 
         database.sending_to_database(query, values)
         response['message'] = "appointment added successfully"
