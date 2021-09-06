@@ -218,7 +218,7 @@ def user_registration():
             db.single_select(query)
 
             message = Message('Thank You', sender='justtotestmywork@gmail.com', recipients=[email])
-            message.body = "Thank you for registering happy shopping"
+            message.body = "Thank you for registering how you enjoy your stay"
             mail.send(message)
             response["message"] = 'Success'
             response["status_code"] = 201
@@ -258,8 +258,7 @@ def login_user():
         password = request.json["password"]
         conn = sqlite3.connect("hotel.db")
         c = conn.cursor()
-        statement = (f"SELECT * FROM user WHERE username='{username}' and password ="
-                     f"'{password}'")
+        statement = f"SELECT * FROM user WHERE username='{username}' and password ='{password}'"
         c.execute(statement)
         if not c.fetchone():
             response['message'] = "failed"
