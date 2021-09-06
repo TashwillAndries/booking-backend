@@ -462,6 +462,77 @@ def edit_product(room_id):
                     return response
 
 
+@app.route('/update-appointment/<int:appointment_id>/', methods=['PUT'])
+def edit_appointment(appointment_id):
+    response = {}
+
+    if request.method == "PUT":
+        with sqlite3.connect('hotel.db') as conn:
+            cursor = conn.cursor()
+            incoming_data = dict(request.json)
+            put_data = {}
+
+            if incoming_data.get("check_in_date") is not None:
+                put_data["check_in_date"] = incoming_data.get("check_in_date")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE appointment SET check_in_date =? WHERE appointment_id =?",
+                                   (put_data['check_in_date'],
+                                    appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+                    return response
+
+            if incoming_data.get("check_out_date") is not None:
+                put_data["check_out_date"] = incoming_data.get("check_out_date")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE appointment SET check_out_date =? WHERE appointment_id =?",
+                                   (put_data['check_out_date'],
+                                    appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+                    return response
+
+            if incoming_data.get("appointment_user") is not None:
+                put_data["appointment_user"] = incoming_data.get("appointment_user")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE appointment SET appointment_user =? WHERE appointment_id =?",
+                                   (put_data['appointment_user'],
+                                    appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+                    return response
+
+            if incoming_data.get("hotel_name") is not None:
+                put_data["hotel_name"] = incoming_data.get("hotel_name")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE appointment SET hotel_name =? WHERE appointment_id =?",
+                                   (put_data['hotel_name'],
+                                    appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+                    return response
+
+            if incoming_data.get("total") is not None:
+                put_data["total"] = incoming_data.get("total")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE appointment SET total =? WHERE appointment_id =?",
+                                  (put_data['total'],
+                                   appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+                    return response
+
+
 @app.route("/delete-appointment/<int:appointment_id>")
 def delete_user(appointment_id):
     response = {}
