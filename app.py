@@ -36,7 +36,7 @@ class Database(object):
 
     def sending_to_database(self, query, values):
         self.cursor.execute(query, values)
-        self.conn.commit()
+        # self.conn.commit()
 
     def single_select(self, query):
         self.cursor.execute(query)
@@ -47,6 +47,9 @@ class Database(object):
 
     def fetchone(self):
         return self.cursor.fetchone()
+
+    def commit(self):
+        self.conn.commit()
 
 
 # fetching users from the database
@@ -208,6 +211,7 @@ def user_registration():
                     ",email,username,password) VALUES(?,?,?,?,?,?,?)"
             values = (user_id, first_name, surname, address, email, username, password)
             db.sending_to_database(query, values)
+            db.commit()
 
             message = Message('Thank You', sender='justtotestmywork@gmail.com', recipients=[email])
             message.body = "Thank you for registering happy shopping"
