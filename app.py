@@ -40,7 +40,7 @@ class Database(object):
 
     def single_select(self, query):
         self.cursor.execute(query)
-        self.conn.commit()
+        # self.conn.commit()
 
     def fetch(self):
         return self.cursor.fetchall()
@@ -213,11 +213,16 @@ def user_registration():
             db.sending_to_database(query, values)
             db.commit()
 
+            query = "SELECT * FROM user WHERE username=? AND password=?", (username, password)
+
+            db.single_select(query)
+
             message = Message('Thank You', sender='justtotestmywork@gmail.com', recipients=[email])
             message.body = "Thank you for registering happy shopping"
             mail.send(message)
             response["message"] = 'Success'
             response["status_code"] = 201
+            response['user'] = db.fetchone()
             return response
 
     except SMTPRecipientsRefused:
