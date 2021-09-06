@@ -2,8 +2,6 @@ import hmac
 from flask import *
 from flask_cors import CORS
 
-
-from flask_jwt import JWT
 from flask_mail import Mail, Message
 import datetime
 from smtplib import SMTPRecipientsRefused
@@ -188,7 +186,6 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['CORS-HEADERS'] = ['Content-Type']
 mail = Mail(app)
-jwt = JWT(app, authenticate, identity)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
