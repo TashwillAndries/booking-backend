@@ -210,16 +210,11 @@ def user_registration():
             db.sending_to_database(query, values)
             db.commit()
 
-            query = "SELECT * FROM user WHERE username=? AND password=?", (username, password)
-
-            db.single_select(query)
-
             message = Message('Thank You', sender='justtotestmywork@gmail.com', recipients=[email])
             message.body = "Thank you for registering how you enjoy your stay"
             mail.send(message)
             response["message"] = 'Success'
             response["status_code"] = 201
-            response['user'] = db.fetchone()
             return response
 
     except SMTPRecipientsRefused:
@@ -351,6 +346,7 @@ def room_create():
         query = "INSERT INTO room (hotel_name,room_number,description,suit_type,picture,price) Values(?,?,?,?,?,?)"
         values = (hotel_name, room_number, description, type, upload_file(), price)
         database.sending_to_database(query, values)
+        database.commit()
         response['message'] = "room added successfully"
         response['status_code'] = 201
         return response
