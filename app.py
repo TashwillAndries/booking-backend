@@ -542,46 +542,46 @@ def delete_user(appointment_id):
     return response
 
 
-@app.route("/update-appointment/<int:appointment_id>")
-def update_appointment(appointment_id):
-    response = {}
-
-    if request.method == "PUT":
-        with sqlite3.connect('hotel.db') as conn:
-            cursor = conn.cursor()
-            incoming_data = dict(request.json)
-            put_data = {}
-
-            if incoming_data.get("room_number") is not None:
-                put_data["room_number"] = incoming_data.get("room_number")
-                with sqlite3.connect('hotel.db') as conn:
-                    cursor = conn.cursor()
-                    cursor.execute("UPDATE room SET room_number =? WHERE room_id =?", (put_data['room_number'],
-                                                                                       appointment_id))
-                    conn.commit()
-                    response['message'] = "Update was successful"
-                    response["status_code"] = 201
-
-            if incoming_data.get("description") is not None:
-                put_data["description"] = incoming_data.get("description")
-                with sqlite3.connect('hotel.db') as conn:
-                    cursor = conn.cursor()
-                    cursor.execute("UPDATE room SET description =? WHERE room_id =?",
-                                       (put_data['description'], appointment_id))
-                    conn.commit()
-                    response['message'] = "Update was successful"
-                    response["status_code"] = 201
-
-            if incoming_data.get("suit_type") is not None:
-                put_data["suit_type"] = incoming_data.get("suit_type")
-                with sqlite3.connect('hotel.db') as conn:
-                    cursor = conn.cursor()
-                    cursor.execute("UPDATE room SET quantity =? WHERE room_id =?",
-                                  (put_data['suit_type'], appointment_id))
-                    conn.commit()
-                    response['message'] = "Update was successful"
-                    response["status_code"] = 201
-                    return response
+# @app.route("/update-appointment/<int:appointment_id>")
+# def update_appointment(appointment_id):
+#     response = {}
+#
+#     if request.method == "PUT":
+#         with sqlite3.connect('hotel.db') as conn:
+#             cursor = conn.cursor()
+#             incoming_data = dict(request.json)
+#             put_data = {}
+#
+#             if incoming_data.get("room_number") is not None:
+#                 put_data["room_number"] = incoming_data.get("room_number")
+#                 with sqlite3.connect('hotel.db') as conn:
+#                     cursor = conn.cursor()
+#                     cursor.execute("UPDATE room SET room_number =? WHERE room_id =?", (put_data['room_number'],
+#                                                                                        appointment_id))
+#                     conn.commit()
+#                     response['message'] = "Update was successful"
+#                     response["status_code"] = 201
+#
+#             if incoming_data.get("description") is not None:
+#                 put_data["description"] = incoming_data.get("description")
+#                 with sqlite3.connect('hotel.db') as conn:
+#                     cursor = conn.cursor()
+#                     cursor.execute("UPDATE room SET description =? WHERE room_id =?",
+#                                        (put_data['description'], appointment_id))
+#                     conn.commit()
+#                     response['message'] = "Update was successful"
+#                     response["status_code"] = 201
+#
+#             if incoming_data.get("suit_type") is not None:
+#                 put_data["suit_type"] = incoming_data.get("suit_type")
+#                 with sqlite3.connect('hotel.db') as conn:
+#                     cursor = conn.cursor()
+#                     cursor.execute("UPDATE room SET quantity =? WHERE room_id =?",
+#                                   (put_data['suit_type'], appointment_id))
+#                     conn.commit()
+#                     response['message'] = "Update was successful"
+#                     response["status_code"] = 201
+#                     return response
 
 
 def upload_file():
