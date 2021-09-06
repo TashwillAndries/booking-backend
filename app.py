@@ -469,6 +469,7 @@ def delete_user(appointment_id):
 
     query = "DELETE FROM appointment WHERE appointment_id='" + str(appointment_id) + "'"
     database.single_select(query)
+    database.commit()
     response['status_code'] = 200
     response['message'] = "appointment deleted successfully."
     return response
