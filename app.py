@@ -584,18 +584,6 @@ def update_appointment(appointment_id):
                     return response
 
 
-# route that deletes a single product
-# @app.route("/delete-product/<int:product_id>")
-# def delete_post(product_id):
-#     response = {}
-#     database = Database()
-#
-#     query = "DELETE FROM cart WHERE product_id=" + str(product_id)
-#     database.single_select(query)
-#     response['status_code'] = 200
-#     response['message'] = "product deleted successfully."
-#     return response
-
 def upload_file():
     app.logger.info('in upload route')
     cloudinary.config(cloud_name='dtjgqnwbk', api_key='547853474672121',
