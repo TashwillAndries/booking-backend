@@ -138,8 +138,8 @@ def init_appointment_table():
     with sqlite3.connect('hotel.db') as conn:
         conn.execute("CREATE TABLE IF NOT EXISTS appointment(appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                      "date_made TEXT NOT NULL,"
-                     "check_in_date TEXT NOT NULL,"
-                     "check_out_date TEXT NOT NULL,"
+                     "check_in_date TEXT NOT NULL unique,"
+                     "check_out_date TEXT NOT NULL unique,"
                      "appointment_user TEXT NOT NULL,"
                      "hotel_name TEXT NOT NULL,"
                      "room_no TEXT NOT NULL,"
@@ -357,24 +357,27 @@ def room_create():
 def appointment_create():
     response = {}
     database = Database()
+    try:
+        if request.method == "POST":
+            date_made = datetime.datetime.now()
+            check_in = request.json['check_in_date']
+            check_out = request.json['check_out_date']
+            user = request.json['appointment_user']
+            hotel_name = request.json['hotel_name']
+            room_no = request.json['room_no']
+            total = request.json['total']
 
-    if request.method == "POST":
-        date_made = datetime.datetime.now()
-        check_in = request.json['check_in_date']
-        check_out = request.json['check_out_date']
-        user = request.json['appointment_user']
-        hotel_name = request.json['hotel_name']
-        room_no = request.json['room_no']
-        total = request.json['total']
-
-        query = "INSERT INTO appointment(date_made,check_in_date, check_out_date, appointment_user,hotel_name," \
-                "room_no, total)Values(?,?,?,?,?,?,?)"
-        values = (date_made, check_in, check_out, user, hotel_name, room_no, total)
-
-        database.sending_to_database(query, values)
-        database.commit()
-        response['message'] = "appointment added successfully"
-        response['status_code'] = 201
+            query = "INSERT INTO appointment(date_made,check_in_date, check_out_date, appointment_user,hotel_name," \
+                    "room_no, total)Values(?,?,?,?,?,?,?)"
+            values = (date_made, check_in, check_out, user, hotel_name, room_no, total)
+            database.sending_to_database(query, values)
+            database.commit()
+            response['message'] = "appointment added successfully"
+            response['status_code'] = 201
+            return response
+    except sqlite3.IntegrityError:
+        response['message'] = "appointment already made"
+        response['status_code'] = 401
         return response
 
 
@@ -540,48 +543,6 @@ def delete_user(appointment_id):
     response['status_code'] = 200
     response['message'] = "appointment deleted successfully."
     return response
-
-
-# @app.route("/update-appointment/<int:appointment_id>")
-# def update_appointment(appointment_id):
-#     response = {}
-#
-#     if request.method == "PUT":
-#         with sqlite3.connect('hotel.db') as conn:
-#             cursor = conn.cursor()
-#             incoming_data = dict(request.json)
-#             put_data = {}
-#
-#             if incoming_data.get("room_number") is not None:
-#                 put_data["room_number"] = incoming_data.get("room_number")
-#                 with sqlite3.connect('hotel.db') as conn:
-#                     cursor = conn.cursor()
-#                     cursor.execute("UPDATE room SET room_number =? WHERE room_id =?", (put_data['room_number'],
-#                                                                                        appointment_id))
-#                     conn.commit()
-#                     response['message'] = "Update was successful"
-#                     response["status_code"] = 201
-#
-#             if incoming_data.get("description") is not None:
-#                 put_data["description"] = incoming_data.get("description")
-#                 with sqlite3.connect('hotel.db') as conn:
-#                     cursor = conn.cursor()
-#                     cursor.execute("UPDATE room SET description =? WHERE room_id =?",
-#                                        (put_data['description'], appointment_id))
-#                     conn.commit()
-#                     response['message'] = "Update was successful"
-#                     response["status_code"] = 201
-#
-#             if incoming_data.get("suit_type") is not None:
-#                 put_data["suit_type"] = incoming_data.get("suit_type")
-#                 with sqlite3.connect('hotel.db') as conn:
-#                     cursor = conn.cursor()
-#                     cursor.execute("UPDATE room SET quantity =? WHERE room_id =?",
-#                                   (put_data['suit_type'], appointment_id))
-#                     conn.commit()
-#                     response['message'] = "Update was successful"
-#                     response["status_code"] = 201
-#                     return response
 
 
 def upload_file():
