@@ -481,7 +481,6 @@ def edit_appointment(appointment_id):
                     conn.commit()
                     response['message'] = "Update was successful"
                     response["status_code"] = 201
-                    return response
 
             if incoming_data.get("check_out_date") is not None:
                 put_data["check_out_date"] = incoming_data.get("check_out_date")
@@ -493,7 +492,6 @@ def edit_appointment(appointment_id):
                     conn.commit()
                     response['message'] = "Update was successful"
                     response["status_code"] = 201
-                    return response
 
             if incoming_data.get("appointment_user") is not None:
                 put_data["appointment_user"] = incoming_data.get("appointment_user")
@@ -505,7 +503,6 @@ def edit_appointment(appointment_id):
                     conn.commit()
                     response['message'] = "Update was successful"
                     response["status_code"] = 201
-                    return response
 
             if incoming_data.get("hotel_name") is not None:
                 put_data["hotel_name"] = incoming_data.get("hotel_name")
@@ -517,19 +514,18 @@ def edit_appointment(appointment_id):
                     conn.commit()
                     response['message'] = "Update was successful"
                     response["status_code"] = 201
-                    return response
 
             if incoming_data.get("total") is not None:
                 put_data["total"] = incoming_data.get("total")
                 with sqlite3.connect('hotel.db') as conn:
                     cursor = conn.cursor()
                     cursor.execute("UPDATE appointment SET total =? WHERE appointment_id =?",
-                                  (put_data['total'],
-                                   appointment_id))
+                                   (put_data['total'],
+                                    appointment_id))
                     conn.commit()
                     response['message'] = "Update was successful"
                     response["status_code"] = 201
-                    return response
+            return response
 
 
 @app.route("/delete-appointment/<int:appointment_id>")
