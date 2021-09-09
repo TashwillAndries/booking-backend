@@ -375,9 +375,31 @@ def appointment_create():
             response['message'] = "appointment added successfully"
             response['status_code'] = 201
             return response
+
     except sqlite3.IntegrityError:
         response['message'] = "appointment already made"
         response['status_code'] = 401
+        return response
+
+
+@app.route('/send-email/', methods=["POST"])
+def send_email():
+    response = {}
+    try:
+        email = request.json['email']
+        total = request.json['total']
+        check_in_date = datetime.date.today()
+        message = Message('Thank You', sender='justtotestmywork@gmail.com', recipients=[email])
+        message.body = "Thank you booking on" + " " + str(check_in_date) + " " + "hope you enjoy your day\n" \
+                        "a total of" + " " + "R" + str(total) + " " + "to be paid 2 weeks before check-in date"
+        mail.send(message)
+
+        response["message"] = "Email sent successfully."
+        response["status_code"] = 201
+        return response
+    except SMTPRecipientsRefused:
+        response['message'] = "Please enter a valid email address."
+        response['status_code'] = 403
         return response
 
 
@@ -425,6 +447,7 @@ def delete_user(user_id):
 
     query = "DELETE FROM user WHERE user_id='" + str(user_id) + "'"
     database.single_select(query)
+    database.commit()
     response['status_code'] = 200
     response['message'] = "user deleted successfully."
     return response
