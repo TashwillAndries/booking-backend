@@ -418,6 +418,18 @@ def get_appointments():
     return response
 
 
+@app.route("/delete-user/<int:user_id>")
+def delete_user(user_id):
+    response = {}
+    database = Database()
+
+    query = "DELETE FROM user WHERE user_id='" + str(user_id) + "'"
+    database.single_select(query)
+    response['status_code'] = 200
+    response['message'] = "user deleted successfully."
+    return response
+
+
 # route to edit products
 @app.route('/edit-room/<int:room_id>/', methods=['PUT'])
 def edit_product(room_id):
