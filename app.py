@@ -541,7 +541,7 @@ def edit_appointment(appointment_id):
 
 
 @app.route("/delete-appointment/<int:appointment_id>")
-def delete_user(appointment_id):
+def delete_appointment(appointment_id):
     response = {}
     database = Database()
 
