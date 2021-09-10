@@ -234,6 +234,7 @@ def admin_registration():
         query = "INSERT INTO admin (admin_username,admin_password) VALUES(?,?)"
         values = (username, password)
         db.sending_to_database(query, values)
+        db.commit()
         response["message"] = 'Success'
         response["status_code"] = 201
         return response
