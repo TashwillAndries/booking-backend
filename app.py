@@ -556,12 +556,12 @@ def edit_appointment(appointment_id):
                     response['message'] = "Update was successful"
                     response["status_code"] = 201
 
-            if incoming_data.get("room_number") is not None:
-                put_data["room_number"] = incoming_data.get("room_number")
+            if incoming_data.get("room_no") is not None:
+                put_data["room_no"] = incoming_data.get("room_no")
                 with sqlite3.connect('hotel.db') as conn:
                     cursor = conn.cursor()
-                    cursor.execute("UPDATE appointment SET room_number =? WHERE appointment_id =?",
-                                   (put_data['room_number'],
+                    cursor.execute("UPDATE appointment SET room_no =? WHERE appointment_id =?",
+                                   (put_data['room_no'],
                                     appointment_id))
                     conn.commit()
                     response['message'] = "Update was successful"
