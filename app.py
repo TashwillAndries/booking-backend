@@ -12,6 +12,7 @@ import cloudinary
 import cloudinary.uploader
 
 
+# user class
 class User(object):
     def __init__(self, id,
                  username, password):
@@ -20,6 +21,7 @@ class User(object):
         self.password = password
 
 
+# admin class
 class Admin(object):
     def __init__(self, admin_id, admin_username, admin_password):
         self.admin_id = admin_id
@@ -104,6 +106,7 @@ username_table = {u.username: u for u in users}
 userid_table = {u.id: u for u in users}
 
 
+# fetch admin function
 def fetch_admin():
     with sqlite3.connect('hotel.db') as conn:
         cursor = conn.cursor()
@@ -211,7 +214,7 @@ def user_registration():
             db.commit()
 
             message = Message('Thank You', sender='justtotestmywork@gmail.com', recipients=[email])
-            message.body = "Thank you for registering how you enjoy your stay"
+            message.body = "Thank you for registering hope you enjoy your stay"
             mail.send(message)
             response["message"] = 'Success'
             response["status_code"] = 201
@@ -548,6 +551,17 @@ def edit_appointment(appointment_id):
                     cursor = conn.cursor()
                     cursor.execute("UPDATE appointment SET hotel_name =? WHERE appointment_id =?",
                                    (put_data['hotel_name'],
+                                    appointment_id))
+                    conn.commit()
+                    response['message'] = "Update was successful"
+                    response["status_code"] = 201
+
+            if incoming_data.get("room_number") is not None:
+                put_data["room_number"] = incoming_data.get("room_number")
+                with sqlite3.connect('hotel.db') as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE appointment SET room_number =? WHERE appointment_id =?",
+                                   (put_data['room_number'],
                                     appointment_id))
                     conn.commit()
                     response['message'] = "Update was successful"
