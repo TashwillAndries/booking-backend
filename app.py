@@ -228,8 +228,8 @@ def admin_registration():
     response = {}
     db = Database()
     if request.method == "POST":
-        username = request.form['admin_username']
-        password = request.form['admin_password']
+        username = request.json['admin_username']
+        password = request.json['admin_password']
 
         query = "INSERT INTO admin (admin_username,admin_password) VALUES(?,?)"
         values = (username, password)
@@ -352,7 +352,7 @@ def room_create():
         return response
 
 
-# protected route that creates products
+# protected route that creates appointment
 @app.route('/create-appointment/', methods=['POST'])
 def appointment_create():
     response = {}
@@ -382,6 +382,7 @@ def appointment_create():
         return response
 
 
+# send a email to the user
 @app.route('/send-email/', methods=["POST"])
 def send_email():
     response = {}
@@ -403,7 +404,7 @@ def send_email():
         return response
 
 
-# route to show all the products
+# route to show all the rooms
 @app.route('/get-rooms/', methods=['GET'])
 def get_rooms():
     response = {}
@@ -453,7 +454,7 @@ def delete_user(user_id):
     return response
 
 
-# route to edit products
+# route to edit rooms
 @app.route('/edit-room/<int:room_id>/', methods=['PUT'])
 def edit_product(room_id):
     response = {}
@@ -496,6 +497,7 @@ def edit_product(room_id):
                     return response
 
 
+# route that updates appointments
 @app.route('/update-appointment/<int:appointment_id>/', methods=['PUT'])
 def edit_appointment(appointment_id):
     response = {}
