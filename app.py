@@ -345,10 +345,11 @@ def room_create():
         room_number = request.json['room_number']
         description = request.json['description']
         type = request.json['suit_type']
+        picture = request.json["picture"]
         price = request.json['price']
 
         query = "INSERT INTO room (hotel_name,room_number,description,suit_type,picture,price) Values(?,?,?,?,?,?)"
-        values = (hotel_name, room_number, description, type, upload_file(), price)
+        values = (hotel_name, room_number, description, type, picture, price)
         database.sending_to_database(query, values)
         database.commit()
         response['message'] = "room added successfully"
